@@ -20,7 +20,7 @@ router.post('/sql/', getSQL)
  */
 function getSQL(req, res) {
     //console.log("get SQL ");
-    //console.log(req.body)
+    console.log(req.body)
 
     let sql = "SELECT * from session WHERE ";
     let sql_clauses = [];

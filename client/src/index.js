@@ -83,8 +83,13 @@ class Clause extends React.Component {
     let target_value = e.target.value;
     let column_type = this.column_types[target_value];
 
-    this.props.onChange(index, "column", target_value);
+    this.props.onChange(index, {
+      "column": target_value,
+      "column_type": column_type
+    });
 
+    // set our operator state in case our column type changed and there's a new
+    // operator dropdown
     if (column_type === "number") {
       this.onOperatorChange({ target: { value: '<=' } });
     } else {
@@ -101,7 +106,7 @@ class Clause extends React.Component {
   onOperatorChange(e) {
     let index = this.props.index;
 
-    this.props.onChange(index, "operator", e.target.value);
+    this.props.onChange(index, { "operator": e.target.value });
   }
 
   /**
@@ -113,7 +118,7 @@ class Clause extends React.Component {
   onTextChange(e) {
     let index = this.props.index;
 
-    this.props.onChange(index, "text", e.target.value);
+    this.props.onChange(index, { "text": e.target.value });
   }
 
 
@@ -123,18 +128,17 @@ class Clause extends React.Component {
    */
   render() {
 
-    let optionGenerator = (clause_key, ele, i) => {
-      let self = this;
+    let optionGenerator = (ele, i) => {
       let label = ele[0];
       let value = ele[1];
       return (
-        <option key={value} value={value} selected={(value === self.props.clause[clause_key])}>{label}</option>
+        <option key={value} value={value}>{label}</option>
       )
     };
 
-    let column_dropdown_options = this.column_options.map(optionGenerator.bind(this, "column"));
-    let string_operator_dropdown_options = this.string_operator_options.map(optionGenerator.bind(this, "operator"));
-    let number_operator_dropdown_options = this.number_operator_options.map(optionGenerator.bind(this, "operator"));
+    let column_dropdown_options = this.column_options.map(optionGenerator);
+    let string_operator_dropdown_options = this.string_operator_options.map(optionGenerator);
+    let number_operator_dropdown_options = this.number_operator_options.map(optionGenerator);
 
     let column_type = this.column_types[this.props.clause["column"]];
 
@@ -147,10 +151,10 @@ class Clause extends React.Component {
     return (
       <div>
         <input className="remove_button" type="button" value="-" onClick={this.onRemove.bind(this)} />
-        <select className="clause_dd" type="dropdown" onChange={this.onColumnChange.bind(this)} >
+        <select className="clause_dd" type="dropdown" value={this.props.clause["column"]} onChange={this.onColumnChange.bind(this)} >
           {column_dropdown_options}
         </select>
-        <select className="clause_dd" type="dropdown" onChange={this.onOperatorChange.bind(this)} >
+        <select className="clause_dd" type="dropdown" value={this.props.clause["operator"]} onChange={this.onOperatorChange.bind(this)} >
           {operator_dropdown_options}
         </select>
         <input className="clause_text" type="text" value={this.props.clause["text"]} onChange={this.onTextChange.bind(this)} />
@@ -196,8 +200,9 @@ class PredicateBuilder extends React.Component {
    */
   constructor(props) {
     super(props);
+
     this.state = {
-      'clauses': [{ 'clause_id': 0, 'column': 'user_email', "operator": 'starts_with' }],
+      'clauses': [{ 'clause_id': 0, 'column': 'user_email', "operator": 'starts_with', "column_type": "string" }],
       'clause_id': 1, // id for next clause incrementing id for each clause to tell them apart
       'status': ""
     }
@@ -229,7 +234,8 @@ class PredicateBuilder extends React.Component {
     //console.log("addClause " + clauses)
 
     let clause_id = this.state.clause_id;
-    clauses.push({ 'clause_id': clause_id, 'column': 'user_email', "operator": 'starts_with' });
+    clauses.push({ 'clause_id': clause_id, 'column': 'user_email', "operator": 'starts_with', "column_type": "string" });
+
     // increment the clause_id for the next Clause
     clause_id += 1;
 
@@ -242,13 +248,13 @@ class PredicateBuilder extends React.Component {
    * @param int index the index of the clause to modify.
    * @return None calls self.setState().
    */
-  updateClause(index, clause_key, value) {
+  updateClause(index, values) {
     let clauses = this.state.clauses.slice();
     let updating_clause = clauses[index];
-    //console.log("update column " + updating_clause)
-    updating_clause[clause_key] = value;
+    console.log("update column " + JSON.stringify(updating_clause));
+    updating_clause = Object.assign(updating_clause, values);
 
-    //console.log("update column after" + updating_clause)
+    console.log("update column after" + JSON.stringify(updating_clause))
     clauses.splice(index, 1, updating_clause);
     //console.log("update clauses after" + clauses)
 
