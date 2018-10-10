@@ -44,11 +44,9 @@ class RangeField extends React.Component {
    */
   onTextChange(field, e) {
     let index = this.props.index;
-    console.log("ontextchange " + field)
 
     let changed_prop = {}
     changed_prop[field] = e.target.value;
-    console.log(changed_prop)
     this.props.onChange(index, changed_prop);
   }
 
@@ -230,7 +228,6 @@ class Clauses extends React.Component {
 
   render() {
     let clauses = this.props.clauses.map((ele, i) => {
-      //console.log("clauses render clause id " + ele["clause_id"])
       return (
         <Clause key={ele["clause_id"]} index={i} clause={ele} onRemove={this.props.onRemove} onChange={this.props.onChange} />
       )
@@ -288,11 +285,8 @@ class PredicateBuilder extends React.Component {
    */
   removeClause(index) {
     let clauses = this.state.clauses.slice();
-    //console.log("removeclause " + index)
-    //console.log("removeClause " + clauses)
     clauses.splice(index, 1);
 
-    //console.log("removeClause spliced" + clauses)
     this.setState({ 'clauses': clauses });
   }
 
@@ -303,13 +297,11 @@ class PredicateBuilder extends React.Component {
    */
   addClause() {
     let clauses = this.state.clauses.slice();
-    //console.log("addClause " + clauses)
 
     let clause_id = this.state.clause_id;
     let new_clause = Object.assign({}, this.state.default_clause);
+
     new_clause["clause_id"] = clause_id;
-    console.log(JSON.stringify(new_clause))
-    console.log(clause_id)
     clauses.push(new_clause);
 
     // increment the clause_id for the next Clause
@@ -327,12 +319,9 @@ class PredicateBuilder extends React.Component {
   updateClause(index, values) {
     let clauses = this.state.clauses.slice();
     let updating_clause = clauses[index];
-    console.log("update column " + JSON.stringify(updating_clause));
-    updating_clause = Object.assign(updating_clause, values);
 
-    console.log("update column after" + JSON.stringify(updating_clause))
+    updating_clause = Object.assign(updating_clause, values);
     clauses.splice(index, 1, updating_clause);
-    console.log("update clauses after" + JSON.stringify(clauses))
 
     this.setState({ 'clauses': clauses }, this.validateClause(updating_clause, index, values));
   }
@@ -361,9 +350,7 @@ class PredicateBuilder extends React.Component {
         let field_errors = [];
         field_errors = field_errors.concat(validation.isEmpty(min));
         field_errors = field_errors.concat(validation.isNumber(min));
-        console.log("1 " + JSON.stringify(index_errors))
         index_errors = Object.assign(index_errors, { "min": field_errors });
-        console.log("2 " + JSON.stringify(index_errors))
       }
 
       field_name = "max";
@@ -372,9 +359,7 @@ class PredicateBuilder extends React.Component {
         let field_errors = [];
         field_errors = field_errors.concat(validation.isEmpty(max));
         field_errors = field_errors.concat(validation.isNumber(max));
-        console.log("3 " + JSON.stringify(index_errors))
         index_errors = Object.assign(index_errors, { "max": field_errors });
-        console.log("4 " + JSON.stringify(index_errors))
       }
 
     } else {
@@ -403,7 +388,6 @@ class PredicateBuilder extends React.Component {
     }
     errors[index] = index_errors;
     this.setState({ "errors": errors });
-    console.log('end of validate' + JSON.stringify(errors))
   }
 
 
@@ -412,7 +396,6 @@ class PredicateBuilder extends React.Component {
    * 
    */
   performSearch() {
-    //console.log("perform search " + JSON.stringify(this.state.clauses))
 
     let self = this;
     let clauses = this.state.clauses.slice();
@@ -422,8 +405,6 @@ class PredicateBuilder extends React.Component {
       delete ele["clause_id"];
       return ele;
     });
-
-    //console.log("after cleaning " + JSON.stringify(clauses))
 
     let uri = "/sql"
 
@@ -435,11 +416,9 @@ class PredicateBuilder extends React.Component {
       'body': JSON.stringify(clauses)
     })
       .then((response) => {
-        //console.log('returned')
         return response.json();
       })
       .then((sql_obj) => {
-        //console.log(sql_obj);
         let sql = sql_obj["SQL"];
 
         self.setState({ "status": sql });

@@ -19,8 +19,6 @@ router.post('/sql/', getSQL)
  * @return json sql {"SQL": "<sql statement>"}
  */
 function getSQL(req, res) {
-    //console.log("get SQL ");
-    console.log(req.body)
 
     let sql = "SELECT * from session";
     let sql_clauses = [];

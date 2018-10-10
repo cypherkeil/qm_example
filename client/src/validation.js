@@ -6,7 +6,6 @@
  * @return errors An array of strings describing any errors found. An empty array is returned if there is no error.
  */
 let isEmpty = (val) => {
-    console.log('in isempty')
     if (!val.trim()) {
         return ["cannot be blank"];
     }
@@ -20,7 +19,6 @@ let isEmpty = (val) => {
  * @return errors An array of strings describing any errors found. An empty array is returned if there is no error.
  */
 let isNumber = (val) => {
-    console.log('in isnumber')
     if (isNaN(parseFloat(val))) {
         return ["must be a number"];
     }
@@ -34,7 +32,6 @@ let isNumber = (val) => {
  * @return errors An array of strings describing any errors found. An empty array is returned if there is no error.
  */
 let isString = (val) => {
-    console.log('in isstring')
     if (typeof val !== "string") {
         return ["must be a valid value"];
     }
@@ -48,7 +45,6 @@ let isString = (val) => {
  * @return errors An array of strings describing any errors found. An empty array is returned if there is no error.
  */
 let isList = (val) => {
-    console.log('in isarray')
     let val_array = val.split(",");
 
     if (!val_array instanceof Array) {
