@@ -71,11 +71,17 @@ function getSQL(req, res) {
             sql_operator = ">=";
             sql_value = value;
         } else if (operator === "in_list") {
-            sql_operator = "IN"
-            sql_value = "(" + value + ")";
+            sql_operator = "IN";
+            sql_value = value.split(",").map((ele, i) => {
+                return "'" + ele.trim() + "'";
+            })
+            sql_value = "(" + sql_value.join(", ") + ")";
         } else if (operator === "in_list_num") {
-            sql_operator = "in"
-            sql_value = "(" + value + ")";
+            sql_operator = "IN";
+            sql_value = value.split(",").map((ele, i) => {
+                return ele.trim();
+            })
+            sql_value = "(" + sql_value.join(", ") + ")";
         }
 
         // between is a special case that has more than one operator/value added
