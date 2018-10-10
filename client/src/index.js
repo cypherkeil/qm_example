@@ -254,8 +254,19 @@ class PredicateBuilder extends React.Component {
   constructor(props) {
     super(props);
 
+    let default_clause = {
+      "clause_id": 0,
+      "column": 'user_email',
+      "operator": 'starts_with',
+      "column_type": "string",
+      "text": "",
+      "min": "",
+      "max": ""
+    };
+
     this.state = {
-      'clauses': [{ 'clause_id': 0, 'column': 'user_email', "operator": 'starts_with', "column_type": "string" }],
+      'default_clause': default_clause,
+      'clauses': [default_clause],
       'clause_id': 1, // id for next clause incrementing id for each clause to tell them apart
       'status': ""
     }
@@ -287,7 +298,22 @@ class PredicateBuilder extends React.Component {
     //console.log("addClause " + clauses)
 
     let clause_id = this.state.clause_id;
-    clauses.push({ 'clause_id': clause_id, 'column': 'user_email', "operator": 'starts_with', "column_type": "string" });
+    let new_clause = Object.assign({}, this.state.default_clause);
+    new_clause["clause_id"] = clause_id;
+    console.log(JSON.stringify(new_clause))
+    console.log(clause_id)
+    clauses.push(new_clause);
+    /*
+    clauses.push({
+      "clause_id": clause_id,
+      "column": 'user_email',
+      "operator": 'starts_with',
+      "column_type": "string",
+      "text": "",
+      "min": "",
+      "max": ""
+    });
+    */
 
     // increment the clause_id for the next Clause
     clause_id += 1;
