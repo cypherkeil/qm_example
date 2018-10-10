@@ -1,0 +1,16 @@
+{
+  "name": "qm_example",
+  "version": "0.0.1",
+  "description": "Code example for Quantum Metric.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christine Chun",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
+  }
+}

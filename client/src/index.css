@@ -1,0 +1,61 @@
+body {
+  font: 14px "Avenir", "Century Gothic", "Futura", sans-serif;
+  margin: 20px;
+  background-color: #efefef;
+}
+
+.search_title, .status_title {
+  font-size: 14pt;
+  color: #666666;
+  margin-bottom: 5px;
+  width: 100%;
+  border-bottom: 2px solid #dddddd;
+  clear: both;
+}
+
+.status {
+  font-size: 12pt;
+  padding: 12px;
+  clear: both;
+}
+
+.search_button_container {
+  float: right;
+}
+
+select, input {
+  border-radius: 2px;
+  padding-left: 8px;
+}
+
+input.action_button {
+  border: none;
+  margin: 3px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #299ec2;
+  color: #ffffff;
+}
+
+input.remove_button {
+  background: #f9f9f9;
+  height: 36px;
+  width: 36px;
+  margin: 3px;
+}
+
+select.clause_dd {
+  height: 36px;
+  margin: 3px;
+  background-color: #ececec;
+}
+
+input.clause_text {
+  height: 32px;
+  width: 200px;
+  margin: 3px;
+  border: 1px solid #cccccc;
+  box-shadow: none;
+}
