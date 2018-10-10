@@ -4,13 +4,23 @@ body {
   background-color: #efefef;
 }
 
-.search_title, .status_title {
+.search_title, .status_title, .error_title {
   font-size: 14pt;
   color: #666666;
   margin-bottom: 5px;
   width: 100%;
   border-bottom: 2px solid #dddddd;
   clear: both;
+}
+
+.error_title {
+  color: #ff0000;
+  border-bottom: 2px solid #ff0000;
+}
+
+.errors {
+  color: #ff0000;
+  margin-bottom: 8px;
 }
 
 .status {
@@ -37,6 +47,11 @@ input.action_button {
   padding-bottom: 10px;
   background-color: #299ec2;
   color: #ffffff;
+}
+
+input.action_button:disabled {
+  background-color: #cccccc;
+  color: #eeeeee;
 }
 
 input.remove_button {

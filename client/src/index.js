@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import validation from './validation'
 import './index.css';
 
 /**
@@ -20,6 +20,10 @@ class TextField extends React.Component {
     this.props.onChange(index, { "text": e.target.value });
   }
 
+  /**
+   * Lifecycle.
+   * 
+   */
   render() {
     return (
       <input className="clause_text" type="text" value={this.props.clause["text"]} onChange={this.onTextChange.bind(this)} />
@@ -48,6 +52,10 @@ class RangeField extends React.Component {
     this.props.onChange(index, changed_prop);
   }
 
+  /**
+   * Lifecycle.
+   * 
+   */
   render() {
     return (
       <div className="range_container">
@@ -185,9 +193,7 @@ class Clause extends React.Component {
     let column_dropdown_options = this.column_options.map(optionGenerator);
     let string_operator_dropdown_options = this.string_operator_options.map(optionGenerator);
     let number_operator_dropdown_options = this.number_operator_options.map(optionGenerator);
-
     let column_type = this.column_types[this.props.clause["column"]];
-
     let operator_dropdown_options = string_operator_dropdown_options;
 
     if (column_type === "number") {
@@ -266,9 +272,11 @@ class PredicateBuilder extends React.Component {
 
     this.state = {
       'default_clause': default_clause,
-      'clauses': [default_clause],
+      'clauses': [Object.assign({}, default_clause)],
       'clause_id': 1, // id for next clause incrementing id for each clause to tell them apart
-      'status': ""
+      'status': "",
+      // {index: {field_name: [errors]}}
+      'errors': {}
     }
   }
 
@@ -303,17 +311,6 @@ class PredicateBuilder extends React.Component {
     console.log(JSON.stringify(new_clause))
     console.log(clause_id)
     clauses.push(new_clause);
-    /*
-    clauses.push({
-      "clause_id": clause_id,
-      "column": 'user_email',
-      "operator": 'starts_with',
-      "column_type": "string",
-      "text": "",
-      "min": "",
-      "max": ""
-    });
-    */
 
     // increment the clause_id for the next Clause
     clause_id += 1;
@@ -337,8 +334,78 @@ class PredicateBuilder extends React.Component {
     clauses.splice(index, 1, updating_clause);
     console.log("update clauses after" + JSON.stringify(clauses))
 
-    this.setState({ 'clauses': clauses });
+    this.setState({ 'clauses': clauses }, this.validateClause(updating_clause, index, values));
   }
+
+  /**
+  * Sets data validation errors in the state if there are any
+  * 
+  * @param Object updating_clause The clause that has been updated with new values.
+  * @param String index The index of the Clause component.
+  * @param Object changed_values An object describing which keys changed to new values.
+  * @return None Sets this.state.errors to an error object.
+  */
+  validateClause(updating_clause, index, changed_values) {
+    let column_type = updating_clause["column_type"];
+    let operator = updating_clause["operator"];
+
+
+    let errors = { ...this.state.errors };
+    let index_errors = errors[index] || {};
+
+    if (operator === "between") {
+      let field_name = "min";
+
+      if (changed_values.hasOwnProperty(field_name)) {
+        let min = updating_clause[field_name];
+        let field_errors = [];
+        field_errors = field_errors.concat(validation.isEmpty(min));
+        field_errors = field_errors.concat(validation.isNumber(min));
+        console.log("1 " + JSON.stringify(index_errors))
+        index_errors = Object.assign(index_errors, { "min": field_errors });
+        console.log("2 " + JSON.stringify(index_errors))
+      }
+
+      field_name = "max";
+      if (changed_values.hasOwnProperty(field_name)) {
+        let max = updating_clause[field_name];
+        let field_errors = [];
+        field_errors = field_errors.concat(validation.isEmpty(max));
+        field_errors = field_errors.concat(validation.isNumber(max));
+        console.log("3 " + JSON.stringify(index_errors))
+        index_errors = Object.assign(index_errors, { "max": field_errors });
+        console.log("4 " + JSON.stringify(index_errors))
+      }
+
+    } else {
+      if (changed_values.hasOwnProperty("text")) {
+        let field_name = "text";
+        let text = updating_clause["text"];
+
+        if (["in_list", "in_list_num"].includes(operator)) {
+          let field_errors = [];
+          field_errors = field_errors.concat(validation.isEmpty(text));
+          field_errors = field_errors.concat(validation.isList(text));
+          index_errors = Object.assign(index_errors, { "text": field_errors });
+        } else {
+          // most of everything
+          let field_errors = [];
+          if (column_type === "string") {
+            field_errors = field_errors.concat(validation.isEmpty(text));
+            field_errors = field_errors.concat(validation.isString(text));
+          } else {
+            field_errors = field_errors.concat(validation.isEmpty(text));
+            field_errors = field_errors.concat(validation.isNumber(text));
+          }
+          index_errors = Object.assign(index_errors, { "text": field_errors });
+        }
+      }
+    }
+    errors[index] = index_errors;
+    this.setState({ "errors": errors });
+    console.log('end of validate' + JSON.stringify(errors))
+  }
+
 
   /**
    * Defines what happens when you hit the "Search" button
@@ -380,11 +447,62 @@ class PredicateBuilder extends React.Component {
   }
 
   /**
+   * Generates an error message string from the "errors" object in the state.
+   */
+  getErrorMessage() {
+    let error_message = "";
+    let error_strings = [];
+
+    Object.keys(this.state.errors).forEach((ele, i) => {
+      // convert from array-index to human-index
+      let row_string = "row " + (parseInt(ele) + 1);
+      let index_errors = this.state.errors[ele];
+
+      Object.keys(index_errors).forEach((field_name, i) => {
+        let errors = index_errors[field_name];
+
+        if (errors && errors.length > 0) {
+          // maximum on row # ...
+          let pretty_field_name = field_name;
+          if (field_name === "min") {
+            pretty_field_name = "Minimum";
+          } else if (field_name === "max") {
+            pretty_field_name = "Maximum";
+          } else {
+            pretty_field_name = "Value"
+          }
+          let error_string = pretty_field_name + " on " + row_string + ": " + errors.join(", ") + ".";
+          error_strings.push(error_string);
+        }
+      });
+    });
+
+    if (error_strings && error_strings.length > 0) {
+      error_message = error_strings.join("\n\n");
+    }
+
+    return error_message;
+
+  }
+  /**
    * Lifecycle.
    * 
    * 
    */
   render() {
+
+    let error_element = '';
+    let error_message = this.getErrorMessage();
+
+    if (error_message && error_message.length > 0) {
+      error_element = (
+        <div>
+          <div className="error_title">Errors</div>
+          <div className="errors">{error_message}</div>
+        </div>
+      );
+    }
+
     let status_element = '';
 
     if (this.state.status) {
@@ -399,9 +517,10 @@ class PredicateBuilder extends React.Component {
     return (
       <div className="predicate_builder">
         <div className="search_title">Search</div>
+        {error_element}
         <Clauses clauses={this.state.clauses} onAdd={this.addClause.bind(this)} onRemove={this.removeClause.bind(this)} onChange={this.updateClause.bind(this)} />
         <div className="search_button_container">
-          <input className="action_button" type="button" value="Search" onClick={this.performSearch.bind(this)} />
+          <input className="action_button" type="button" value="Search" disabled={(error_message && error_message.length > 0)} onClick={this.performSearch.bind(this)} />
         </div>
         {status_element}
       </div>
