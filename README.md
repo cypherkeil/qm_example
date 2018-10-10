@@ -22,7 +22,7 @@ npm run start
 
 ---
 
-## RESTful API
+## API
 
 Here is a description of the API defined by the demo. There is no authentication.
 
