@@ -22,7 +22,7 @@ function getSQL(req, res) {
     //console.log("get SQL ");
     console.log(req.body)
 
-    let sql = "SELECT * from session WHERE ";
+    let sql = "SELECT * from session";
     let sql_clauses = [];
 
     req.body.forEach((ele, i) => {
@@ -76,7 +76,11 @@ function getSQL(req, res) {
         sql_clauses.push(clause_sql);
     })
 
-    sql = sql + sql_clauses.join(" AND ") + ";";
+    if (sql_clauses && sql_clauses.length > 0) {
+        sql = sql + " WHERE " + sql_clauses.join(" AND ") + ";";
+    } else {
+        sql = sql + ";";
+    }
     return res.json({ "SQL": sql });
 }
 
