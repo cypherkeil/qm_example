@@ -31,8 +31,8 @@ Here is a description of the API defined by the demo. There is no authentication
 * body: a list of objects describing a clause
 ```javascript
 [
-    {"column":"domain", "operator":"="},
-    {"column":"user_email", "operator":"=", "text":"2"},
+    {"column":"domain", "operator":"contains", "happy"},
+    {"column":"user_email", "operator":"equals", "text":"email@somewhere.com"},
     {"column":"screen_width", "operator":">=", "text":"355"}
 ]
 ```

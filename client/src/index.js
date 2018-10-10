@@ -251,10 +251,10 @@ class PredicateBuilder extends React.Component {
   updateClause(index, values) {
     let clauses = this.state.clauses.slice();
     let updating_clause = clauses[index];
-    console.log("update column " + JSON.stringify(updating_clause));
+    //console.log("update column " + JSON.stringify(updating_clause));
     updating_clause = Object.assign(updating_clause, values);
 
-    console.log("update column after" + JSON.stringify(updating_clause))
+    //console.log("update column after" + JSON.stringify(updating_clause))
     clauses.splice(index, 1, updating_clause);
     //console.log("update clauses after" + clauses)
 

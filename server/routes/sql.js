@@ -20,7 +20,7 @@ router.post('/sql/', getSQL)
  */
 function getSQL(req, res) {
     //console.log("get SQL ");
-    console.log(req.body)
+    //console.log(req.body)
 
     let sql = "SELECT * from session";
     let sql_clauses = [];
@@ -81,6 +81,8 @@ function getSQL(req, res) {
     } else {
         sql = sql + ";";
     }
+
+    console.log(sql);
     return res.json({ "SQL": sql });
 }
 
