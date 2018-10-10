@@ -7,18 +7,26 @@ This is a brief example demonstrating an example SQL builder made out of Express
 ## Installation
 
 1. Clone this repository.
-2. ```cd <qm_example>```
-3. Build the static files for the React front-end in the `client/` directory.
+2. Install the server files by running `npm install` in the root repository directory.
+```
+cd <qm_example>
+npm install
+```
+3. Install the client files by running `npm install` in the `client/` subdirectory.
 ```
 cd client/
+npm install
+```
+4. Build the static files for the React front-end in the `client/` directory.
+```
 npm run build
 ``` 
-4. Run the express server (which will also serve the React front-end) in the root `qm_example/` directory.
+5. Run the express server (which will also serve the React front-end) in the root `qm_example/` directory.
 ```
 cd ../
 npm run start
 ```
-5. Visit the page at `http://localhost:3003/`.
+6. Visit the page at `http://localhost:3003/`.
 
 ---
 
