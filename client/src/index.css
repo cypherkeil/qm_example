@@ -59,3 +59,39 @@ input.clause_text {
   border: 1px solid #cccccc;
   box-shadow: none;
 }
+
+/* Range clause */
+.range_container {
+  display: inline;
+}
+
+.clause_label {
+  display: inline-block;
+  border-radius: 2px;
+  min-height: 32px;
+  height: 32px;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding-left: 12px;
+  padding-right: 12px;
+  //background-color: #ececec;
+  //border: 1px solid #cccccc;
+}
+
+input.clause_min {
+  display: inline-block;
+  height: 32px;
+  width: 80px;
+  margin: 3px;
+  border: 1px solid #cccccc;
+  box-shadow: none;
+}
+
+input.clause_max {
+  display: inline-block;
+  height: 32px;
+  width: 80px;
+  margin: 3px;
+  border: 1px solid #cccccc;
+  box-shadow: none;
+}

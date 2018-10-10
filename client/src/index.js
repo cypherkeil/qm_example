@@ -4,6 +4,62 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 /**
+ * A text field has one text entry field to accept a value
+ */
+class TextField extends React.Component {
+
+  /**
+   *  onChange event handler for a dropdown
+   * 
+   * @param event e the onClick event.
+   * @return None calls the onRemove callback with this Clauses's index.
+   */
+  onTextChange(e) {
+    let index = this.props.index;
+
+    this.props.onChange(index, { "text": e.target.value });
+  }
+
+  render() {
+    return (
+      <input className="clause_text" type="text" value={this.props.clause["text"]} onChange={this.onTextChange.bind(this)} />
+    )
+  }
+}
+
+/**
+ * A range field has two text entry fields to accept a range
+ */
+class RangeField extends React.Component {
+
+  /**
+   *  onChange event handler for a dropdown
+   * 
+   * @param event e the onClick event.
+   * @return None calls the onRemove callback with this Clauses's index.
+   */
+  onTextChange(field, e) {
+    let index = this.props.index;
+    console.log("ontextchange " + field)
+
+    let changed_prop = {}
+    changed_prop[field] = e.target.value;
+    console.log(changed_prop)
+    this.props.onChange(index, changed_prop);
+  }
+
+  render() {
+    return (
+      <div className="range_container">
+        <input className="clause_min" type="text" value={this.props.clause["min"]} onChange={this.onTextChange.bind(this, "min")} />
+        <div className="clause_label">to</div>
+        <input className="clause_max" type="text" value={this.props.clause["max"]} onChange={this.onTextChange.bind(this, "max")} />
+      </div>
+    )
+  }
+}
+
+/**
  * A Clause holds a single row expressing an SQL condition
  * it includes a remove button
  * 
@@ -49,14 +105,17 @@ class Clause extends React.Component {
       ['equals', 'equals'],
       ['does not equal', 'not_equals'],
       ['contains', 'contains'],
-      ['does not contain', 'not_contains']
+      ['does not contain', 'not_contains'],
+      ['in list', 'in_list']
     ]
 
     this.number_operator_options = [
       ['less than or equal', '<='],
       ['equals', '='],
       ['does not equal', '!='],
-      ['greater than or equal', '>=']
+      ['greater than or equal', '>='],
+      ['in list', 'in_list_num'],
+      ['between', 'between']
     ]
   }
 
@@ -110,19 +169,6 @@ class Clause extends React.Component {
   }
 
   /**
-   *  onChange event handler for a dropdown
-   * 
-   * @param event e the onClick event.
-   * @return None calls the onRemove callback with this Clauses's index.
-   */
-  onTextChange(e) {
-    let index = this.props.index;
-
-    this.props.onChange(index, { "text": e.target.value });
-  }
-
-
-  /**
    * Lifecycle.
    * 
    */
@@ -148,6 +194,13 @@ class Clause extends React.Component {
       operator_dropdown_options = number_operator_dropdown_options;
     }
 
+    let field = <TextField index={this.props.index} clause={this.props.clause} onChange={this.props.onChange} />;
+
+    if (this.props.clause["operator"] === "between") {
+      field = <RangeField index={this.props.index} clause={this.props.clause} onChange={this.props.onChange} />;
+    }
+
+
     return (
       <div>
         <input className="remove_button" type="button" value="-" onClick={this.onRemove.bind(this)} />
@@ -157,7 +210,7 @@ class Clause extends React.Component {
         <select className="clause_dd" type="dropdown" value={this.props.clause["operator"]} onChange={this.onOperatorChange.bind(this)} >
           {operator_dropdown_options}
         </select>
-        <input className="clause_text" type="text" value={this.props.clause["text"]} onChange={this.onTextChange.bind(this)} />
+        {field}
       </div>
     )
   }
@@ -251,12 +304,12 @@ class PredicateBuilder extends React.Component {
   updateClause(index, values) {
     let clauses = this.state.clauses.slice();
     let updating_clause = clauses[index];
-    //console.log("update column " + JSON.stringify(updating_clause));
+    console.log("update column " + JSON.stringify(updating_clause));
     updating_clause = Object.assign(updating_clause, values);
 
-    //console.log("update column after" + JSON.stringify(updating_clause))
+    console.log("update column after" + JSON.stringify(updating_clause))
     clauses.splice(index, 1, updating_clause);
-    //console.log("update clauses after" + clauses)
+    console.log("update clauses after" + JSON.stringify(clauses))
 
     this.setState({ 'clauses': clauses });
   }

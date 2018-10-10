@@ -20,7 +20,7 @@ router.post('/sql/', getSQL)
  */
 function getSQL(req, res) {
     //console.log("get SQL ");
-    //console.log(req.body)
+    console.log(req.body)
 
     let sql = "SELECT * from session";
     let sql_clauses = [];
@@ -70,10 +70,28 @@ function getSQL(req, res) {
         } else if (operator === ">=") {
             sql_operator = ">=";
             sql_value = value;
+        } else if (operator === "in_list") {
+            sql_operator = "IN"
+            sql_value = "(" + value + ")";
+        } else if (operator === "in_list_num") {
+            sql_operator = "in"
+            sql_value = "(" + value + ")";
         }
 
-        let clause_sql = column + " " + sql_operator + " " + sql_value;
-        sql_clauses.push(clause_sql);
+        // between is a special case that has more than one operator/value added
+        if (operator === "between") {
+            sql_operator = ">=";
+            sql_value = value;
+
+            let min = ele["min"];
+            let max = ele["max"];
+            let clause_sql = column + " > " + min + " AND " + column + " < " + max;
+            sql_clauses.push(clause_sql);
+        } else {
+            // everything else
+            let clause_sql = column + " " + sql_operator + " " + sql_value;
+            sql_clauses.push(clause_sql);
+        }
     })
 
     if (sql_clauses && sql_clauses.length > 0) {
